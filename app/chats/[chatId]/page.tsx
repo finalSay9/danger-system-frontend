@@ -34,6 +34,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         chat_id: parseInt(params.id),
         content: message,
         sender_id: user.id,
+        receiver_id: 0
       });
       setMessage("");
     } catch (error) {

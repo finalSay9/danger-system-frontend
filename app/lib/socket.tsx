@@ -1,14 +1,17 @@
 // lib/socket.ts
 import { io, Socket } from "socket.io-client";
-import { Message, MessageCreate } from "./types";
 
-class SocketClient {
+export class SocketClient {
   private socket: Socket | null = null;
 
   connect(token: string, chatId: number): Socket {
+    if (!Number.isInteger(chatId)) {
+      throw new Error(`Invalid chatId: ${chatId}`);
+    }
     this.socket = io("http://localhost:8000", {
+      path: "/websocket/ws", // Match backend WebSocket path
+      query: { chat_id: chatId.toString() }, // Use chat_id to match backend
       auth: { token },
-      query: { chatId: chatId.toString() },
     });
     return this.socket;
   }
@@ -17,18 +20,6 @@ class SocketClient {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
-    }
-  }
-
-  onMessage(callback: (message: Message) => void) {
-    if (this.socket) {
-      this.socket.on("message", callback);
-    }
-  }
-
-  sendMessage(message: MessageCreate) {
-    if (this.socket) {
-      this.socket.emit("message", message);
     }
   }
 }
