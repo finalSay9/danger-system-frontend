@@ -1,5 +1,5 @@
 // components/ChatList.tsx
-'use client'
+"use client";
 
 import { useQuery } from "@tanstack/react-query";
 import { getChats } from "../lib/api";
@@ -9,18 +9,18 @@ import Link from "next/link";
 export default function ChatList() {
   const { user } = useAuthStore();
   const { data: chats, isLoading, error } = useQuery({
-    queryKey: ["chats"],
+    queryKey: ["chats", user?.id],
     queryFn: getChats,
     enabled: !!user,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading chats</div>;
+  if (error) return <div>Error loading chats: {(error as Error).message}</div>;
 
   return (
     <div className="p-4">
       <h2 className="text-xl mb-4">Chats</h2>
-    
       {chats?.map((chat) => (
         <Link key={chat.id} href={`/chats/${chat.id}`}>
           <div className="p-2 border-b">

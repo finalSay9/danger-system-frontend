@@ -30,7 +30,7 @@ export interface User {
   last_name?: string;
   created_at: string;
   is_active: boolean;
-  role: Role;
+  
 }
 
 export interface Token {
@@ -71,6 +71,7 @@ export interface PaginatedMessages {
 export interface MessageCreate {
   sender_id: number;
   receiver_id: number;
+  chat_id: number;
   content: string;
   message_type?: MessageType;
   attachment_url?: string;
