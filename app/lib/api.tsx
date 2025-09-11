@@ -53,7 +53,7 @@ export const sendMessage = async (message: MessageCreate): Promise<Message> => {
 };
 
 export const getMessages = async (chatId: number, page: number = 1, pageSize: number = 20): Promise<PaginatedMessages> => {
-  const response = await api.get<PaginatedMessages>(`/chats/${chatId}/messages`, {
+  const response = await api.get<PaginatedMessages>(`messages/chats/${chatId}/messages`, {
     params: { page, page_size: pageSize },
   });
   return response.data;

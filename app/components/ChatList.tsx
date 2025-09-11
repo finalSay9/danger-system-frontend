@@ -12,16 +12,19 @@ export default function ChatList() {
     queryKey: ["chats", user?.id],
     queryFn: getChats,
     enabled: !!user,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
+
+  console.log("ChatList data:", { chats, isLoading, error }); // Debug log
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading chats: {(error as Error).message}</div>;
+  if (!chats || chats.length === 0) return <div>No chats available. Create a new chat.</div>;
 
   return (
     <div className="p-4">
       <h2 className="text-xl mb-4">Chats</h2>
-      {chats?.map((chat) => (
+      {chats.map((chat) => (
         <Link key={chat.id} href={`/chats/${chat.id}`}>
           <div className="p-2 border-b">
             <h3>{chat.name}</h3>

@@ -20,24 +20,33 @@ export default function MessageList({ chatId }: MessageListProps) {
 
   useEffect(() => {
     if (token && user) {
-      const socket = socketClient.connect(token.access_token, chatId);
-      socket.on("message", (message: Message) => {
-        refetch(); // Refresh messages on new message
+      socketClient.connect(token.access_token, chatId, {
+        onMessage: (data: Message) => {
+          console.log("📩 New message from WebSocket:", data);
+          refetch(); // refresh message list when new message arrives
+        },
+        onOpen: () => console.log("✅ WebSocket connected in MessageList"),
+        onClose: () => console.log("❌ WebSocket closed in MessageList"),
       });
+
       return () => socketClient.disconnect();
     }
-  }, [token, user, chatId]);
+  }, [token, user, chatId, refetch]);
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
       {messages?.messages.map((message) => (
         <div
           key={message.id}
-          className={`p-2 mb-2 ${message.sender.id === user?.id ? "text-right" : "text-left"}`}
+          className={`p-2 mb-2 ${
+            message.sender.id === user?.id ? "text-right" : "text-left"
+          }`}
         >
           <p className="font-bold">{message.sender.username}</p>
           <p>{message.content}</p>
-          <p className="text-sm text-gray-500">{new Date(message.timestamp).toLocaleString()}</p>
+          <p className="text-sm text-gray-500">
+            {new Date(message.timestamp).toLocaleString()}
+          </p>
         </div>
       ))}
     </div>
